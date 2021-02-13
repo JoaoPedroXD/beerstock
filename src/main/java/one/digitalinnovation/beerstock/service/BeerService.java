@@ -69,4 +69,19 @@ public class BeerService {
         }
         throw new BeerStockExceededException(id, quantityToIncrement);
     }
+
+    //Realiza o decremento das cervejas
+    public BeerDTO decrement(Long id, int quantityToDecrement) throws BeerNotFoundException, BeerStockExceededException {
+        //Variável responsável para pegar a cerveja desejada
+        Beer beerToDecrementStock = verifyIfExists(id);
+
+        //Caso depois do decremento seja um número maior que o máximo dispara a exceção de excedido
+        if ((quantityToDecrement + beerToDecrementStock.getQuantity()) <= beerToDecrementStock.getMax()) {
+            //Pega a cerveja a ser decrementada e realiza a ação
+            beerToDecrementStock.setQuantity(beerToDecrementStock.getQuantity() - quantityToDecrement);
+            Beer decrementedBeerStock = beerRepository.save(beerToDecrementStock);
+            return beerMapper.toDTO(decrementedBeerStock);
+        }
+        throw new BeerStockExceededException(id, quantityToDecrement);
+    }
 }
